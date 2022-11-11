@@ -1,4 +1,7 @@
-import React, {useState} from "react";
+import React from "react";
+import { DownOutlined } from '@ant-design/icons';
+import { Dropdown, Space } from 'antd';
+import 'antd/dist/antd.min.css';
 import './App.css';
 
 const data = [
@@ -22,24 +25,9 @@ const data = [
                         ordering: 2,
                         icon: null,
                         title: "Մոբայլ Ծրագրավորում",
-                        children: [{
-                            id: 12,
-                            parent_id: null,
-                            ordering: 2,
-                            icon: null,
-                            title: "Բիզնես",
-                            children: []
-                        },]
-                    },
-                    {
-                        id: 7,
-                        parent_id: 5,
-                        ordering: 2,
-                        icon: null,
-                        title: "Մոբայլ Ծրագրավորում",
                         children: [
                             {
-                                id: 13,
+                                id: 34,
                                 parent_id: null,
                                 ordering: 3,
                                 icon: null,
@@ -47,6 +35,14 @@ const data = [
                                 children: []
                             },
                         ]
+                    },
+                    {
+                        id: 7,
+                        parent_id: 5,
+                        ordering: 2,
+                        icon: null,
+                        title: "Մոբայլ Ծրագրավորում",
+                        children: []
                     },
                 ]
             }
@@ -58,16 +54,7 @@ const data = [
         ordering: 2,
         icon: null,
         title: "Բիզնես",
-        children: [
-            {
-                id: 22,
-                parent_id: null,
-                ordering: 2,
-                icon: null,
-                title: "Բիզնես",
-                children: []
-            },
-        ]
+        children: []
     },
     {
         id: 3,
@@ -79,62 +66,76 @@ const data = [
     },
 ];
 
+const dropDownMenu = (values) => {
+    return values.map(item => {
+        item = {
+            ...item,
+            key: item.id,
+            label: item.title,
+            children: Boolean(item.children.length) ? dropDownMenu(item.children) : null,
+        }
+        return item
+    });
+}
+
+const items = [
+    {
+        key: '1',
+        type: 'group',
+        label: 'Group title',
+        children: [
+            {
+                key: '1-1',
+                label: '1st menu item',
+                children: [
+                    {
+                        key: '1-1',
+                        label: '1st menu item',
+                    },
+                    {
+                        key: '1-2',
+                        label: '2nd menu item',
+                    },
+                ],
+            },
+            {
+                key: '1-2',
+                label: '2nd menu item',
+            },
+        ],
+    },
+    {
+        key: '2',
+        label: 'sub menu',
+        children: [
+            {
+                key: '2-1',
+                label: '3rd menu item',
+            },
+            {
+                key: '2-2',
+                label: '4th menu item',
+            },
+        ],
+    },
+];
+
 const App = () => {
-    const [dropDownList, setDropDownList] = useState({});
-    const [selectedDropDownIds, setSelectedDropDownIds] = useState([]);
-
-    const handleMouseOver = ({children, id}) => {
-        if(!children.length) return;
-        setSelectedDropDownIds(prev => [...prev, id]);
-        setDropDownList(prev => ({...prev, [id]: children}));
-    };
-
-    const handleMouseLeave = () => {
-        setDropDownList({});
-        setSelectedDropDownIds([]);
-    }
-
-    const handleMouseLeaveItem = (id) => {
-        const newList = dropDownList;
-        delete newList[id];
-        setTimeout(() => {
-            setDropDownList(newList);
-        })
-    }
-
   return (
     <div className="app">
-        <div>
-            <ul className='dropDownMenu'>
-                {data.map(({id, title, children}) => (
-                     <li
-                         key={id}
-                         onMouseOver={() => handleMouseOver({children, id})}
-                         className={selectedDropDownIds.includes(id) ? 'selectedItem' : 'item'}
-                     >
-                         {title}
-                     </li>
-                ))}
-            </ul>
-            <div className='dropDownContainer' onMouseLeave={handleMouseLeave}>
-                {Boolean(Object.keys(dropDownList).length) && Object.values(dropDownList).map(item => (
-                    <div className='dropDownList'>
-                        <ul>
-                            {Object.values(item).map(({id, title, children}) => (
-                                <li
-                                    key={id}
-                                    onMouseLeave={() => handleMouseLeaveItem(id)}
-                                    onMouseOver={() => handleMouseOver({children, id})}
-                                    className={selectedDropDownIds.includes(id) ? 'selectedItem' : 'item'}
-                                >
-                                    {title}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ))}
-            </div>
-        </div>
+        {data.map(item => (
+            <Dropdown
+                menu={{items: dropDownMenu(item?.children)}}
+                key={item.id}
+            >
+                <button onClick={(e) => e.preventDefault()}>
+                    <Space>
+                        {item.title}
+                        <DownOutlined />
+                    </Space>
+                </button>
+            </Dropdown>
+        ))}
     </div>
   );
 }
