@@ -78,63 +78,25 @@ const dropDownMenu = (values) => {
     });
 }
 
-const items = [
-    {
-        key: '1',
-        type: 'group',
-        label: 'Group title',
-        children: [
-            {
-                key: '1-1',
-                label: '1st menu item',
-                children: [
-                    {
-                        key: '1-1',
-                        label: '1st menu item',
-                    },
-                    {
-                        key: '1-2',
-                        label: '2nd menu item',
-                    },
-                ],
-            },
-            {
-                key: '1-2',
-                label: '2nd menu item',
-            },
-        ],
-    },
-    {
-        key: '2',
-        label: 'sub menu',
-        children: [
-            {
-                key: '2-1',
-                label: '3rd menu item',
-            },
-            {
-                key: '2-2',
-                label: '4th menu item',
-            },
-        ],
-    },
-];
-
 const App = () => {
   return (
     <div className="app">
-        {data.map(item => (
-            <Dropdown
-                menu={{items: dropDownMenu(item?.children)}}
-                key={item.id}
-            >
+        {data.map(item => (Boolean(item.children.length) ?
+                <Dropdown
+                    menu={{items: dropDownMenu(item?.children)}}
+                    key={item.id}
+                >
                 <button onClick={(e) => e.preventDefault()}>
                     <Space>
                         {item.title}
                         <DownOutlined />
                     </Space>
                 </button>
-            </Dropdown>
+                </Dropdown> : <button>
+                    <Space>
+                        {item.title}
+                    </Space>
+                </button>
         ))}
     </div>
   );
